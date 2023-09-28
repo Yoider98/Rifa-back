@@ -30,23 +30,22 @@ app.get('/actualizar-datos', async (req, res) => {
      // Desactivar la caché en la respuesta
      res.setHeader('Cache-Control', 'no-store');
 
-    // Devuelve los datos en formato JSON como respuesta
-    res.json(jsonData);
+    res.json({ success: true, message: 'Datos procesados con éxito' });
   } catch (error) {
     console.error('Error al obtener y procesar el archivo Excel:', error);
-    res.status(500).json({ error: 'Error al obtener y procesar el archivo Excel' });
+    res.status(500).json({ success: false, error: 'Error al obtener y procesar el archivo Excel' });
   }
 });
 
-// Endpoint para obtener los datos procesados en otro lugar de tu aplicación
+// Endpoint para obtener los datos procesados en el frontend
 app.get('/obtener-datos', (req, res) => {
   if (newData) {
-    res.json(newData);
+    res.json({ success: true, data: newData });
   } else {
-    res.status(404).json({ error: 'Los datos aún no se han procesado' });
+    res.status(404).json({ success: false, error: 'Los datos aún no se han procesado' });
   }
 });
 
 app.listen(process.env.PORT || port, () => {
-  console.log("Servidor escuchando en el puerto", process.env.PORT || port  );
+  console.log("Servidor escuchando en el puerto", process.env.PORT || port);
 });
