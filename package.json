@@ -1,0 +1,21 @@
+{
+  "name": "rifa-back",
+  "version": "1.0.0",
+  "description": "peticion de datos",
+  "main": "index.js",
+  "repository": "https://github.com/Yoider98/Rifa-back.git",
+  "author": "Yoider98 <yoideryancy@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev" : "nodemon java.js",
+    "start": "node java.js"
+  },
+  "dependencies": {
+    "axios": "^1.5.1",
+    "express": "^4.18.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
