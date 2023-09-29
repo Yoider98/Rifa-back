@@ -6,7 +6,11 @@ const app = express();
 const port = 3000;
 
 let newData = null; // Variable global para almacenar los datos procesados
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 // Endpoint para descargar y procesar el archivo Excel desde un enlace constante
 app.get('/actualizar-datos', async (req, res) => {
   try {
