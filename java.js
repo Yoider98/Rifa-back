@@ -3,7 +3,7 @@ const axios = require('axios');
 const XLSX = require('xlsx');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 let newData = null; // Variable global para almacenar los datos procesados
 app.use((req, res, next) => {
@@ -11,14 +11,15 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-// Endpoint para descargar y procesar el archivo Excel desde un enlace constante
-app.get('/actualizar-datos', async (req, res) => {
+
+// Endpoint para actualizar y obtener datos
+app.get('/datos', async (req, res) => {
   try {
     // Obtén el archivo Excel desde un enlace constante
     const excelURL = 'https://docs.google.com/spreadsheets/d/1yV6xv86tLCfhyhHJTfLE7yQw5e9ZF-5I/edit?usp=sharing&ouid=115306436663344694367&rtpof=true&sd=true';
     const response = await axios.get(excelURL, { responseType: 'arraybuffer' });
     const excelData = response.data;
-    
+
     // Procesa el archivo Excel
     const workbook = XLSX.read(excelData, { type: 'array' });
 
@@ -31,25 +32,18 @@ app.get('/actualizar-datos', async (req, res) => {
 
     jsonData.shift();
     newData = jsonData.map(subarray => subarray.slice(1));
-     // Desactivar la caché en la respuesta
-     res.setHeader('Cache-Control', 'no-store');
 
-    res.json({ success: true, message: 'Datos procesados con éxito' });
+    // Desactivar la caché en la respuesta
+    res.setHeader('Cache-Control', 'no-store');
+    
+    // Enviar una respuesta exitosa
+    return res.json({ success: true, message: 'Datos procesados con éxito', data: newData });
   } catch (error) {
     console.error('Error al obtener y procesar el archivo Excel:', error);
-    res.status(500).json({ success: false, error: 'Error al obtener y procesar el archivo Excel' });
+    return res.status(500).json({ success: false, error: 'Error al obtener y procesar el archivo Excel' });
   }
 });
 
-// Endpoint para obtener los datos procesados en el frontend
-app.get('/obtener-datos', (req, res) => {
-  if (newData) {
-    res.json({ success: true, data: newData });
-  } else {
-    res.status(404).json({ success: false, error: 'Los datos aún no se han procesado' });
-  }
-});
-
-app.listen(process.env.PORT || port, () => {
-  console.log("Servidor escuchando en el puerto", process.env.PORT || port);
+app.listen(port, () => {
+  console.log("Servidor escuchando en el puerto", port);
 });
